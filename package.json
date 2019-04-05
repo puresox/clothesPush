@@ -18,16 +18,20 @@
   },
   "homepage": "https://github.com/puresox/clothesPush#readme",
   "dependencies": {
+    "axios": "^0.18.0",
+    "ejs": "^2.6.1",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
+    "koa-busboy": "^1.2.0",
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
-    "log4js": "^4.0.2",
-    "mongoose": "^5.4.16",
+    "koa-views": "^6.2.0",
+    "log4js": "^4.1.0",
+    "mongoose": "^5.4.22",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "eslint": "^5.15.0",
+    "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.16.0"
   }

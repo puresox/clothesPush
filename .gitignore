@@ -62,4 +62,4 @@ typings/
 
 config/*
 !config.example.js
-public/img/*
+public/clothes/*

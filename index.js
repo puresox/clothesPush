@@ -1,15 +1,25 @@
 const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
+const views = require('koa-views');
 const serve = require('koa-static');
-const http = require('http');
+const busboy = require('koa-busboy');
 const router = require('./router');
 const { logger } = require('./logger.js');
 const { keys, port } = require('./config/config.js');
+const adminInit = require('./middleware/adminInit');
+
+adminInit();
 
 const app = new Koa();
-const server = http.createServer(app.callback());
 
 app.keys = keys;
+
+app.use(
+  busboy({
+    dest: './public/clothes',
+    fnDestFilename: (fieldname, filename) => filename,
+  }),
+);
 
 app.use(serve('public'));
 
@@ -19,9 +29,19 @@ app.use(
   }),
 );
 
+app.use(
+  views(`${__dirname}/views`, {
+    extension: 'ejs',
+    map: {
+      html: 'ejs',
+    },
+    options: {},
+  }),
+);
+
 app.use(router.routes());
 
-server.listen(port);
+app.listen(port);
 logger.info(`system start,listened on ${port}`);
 
 app.on('error', (err) => {
