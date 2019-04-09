@@ -8,12 +8,19 @@ module.exports = {
     return result;
   },
   findByFashion: async (userId, fashion) => {
-    const result = await Clothe.findOne({ userId, fashion });
+    const result = await Clothe.find({ userId, fashion });
     return result;
   },
-  /** ********************* */
-  updateInfoById: async (id, info) => {
-    const result = await Clothe.updateOne({ _id: id }, { $set: info });
+  findByIdAndDelete: async (id) => {
+    const result = await Clothe.findByIdAndDelete(id);
+    return result;
+  },
+  updateById: async (id, style, fl, fashion, color, size) => {
+    const result = await Clothe.updateOne({ _id: id }, {
+      $set: {
+        style, fl, fashion, color, size,
+      },
+    });
     return result;
   },
 };

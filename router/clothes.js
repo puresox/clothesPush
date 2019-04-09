@@ -1,4 +1,6 @@
 const Router = require('koa-router');
+const fs = require('fs');
+const path = require('path');
 const clotheModel = require('../service/clothe');
 
 const { checkApi } = require('../middleware/userCheck');
@@ -7,7 +9,7 @@ const router = new Router();
 
 router
   .post('/', checkApi, async (ctx) => {
-    // 服装上传
+    // 添加服装
     const { userId } = ctx;
     const {
       style, fl, fashion, color, size,
@@ -34,6 +36,31 @@ router
         pants,
         shoes,
       },
+    };
+  })
+  .del('/:clotheId', checkApi, async (ctx) => {
+    // 删除服装
+    const { clotheId } = ctx.params;
+    const { imagePath } = await clotheModel.findByIdAndDelete(clotheId);
+    const imageUrl = path.join(__dirname, `../public/img/clothes/${imagePath}`);
+    fs.unlink(imageUrl, (err) => {
+      if (err) throw err;
+    });
+    ctx.body = {
+      success: true,
+      msg: '删除成功',
+    };
+  })
+  .put('/:clotheId', checkApi, async (ctx) => {
+    // 修改服装
+    const { clotheId } = ctx.params;
+    const {
+      style, fl, fashion, color, size,
+    } = ctx.request.body;
+    await clotheModel.updateById(clotheId, style, fl, fashion, color, size);
+    ctx.body = {
+      success: true,
+      msg: '修改成功',
     };
   });
 

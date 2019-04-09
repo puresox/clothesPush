@@ -16,7 +16,7 @@ app.keys = keys;
 
 app.use(
   busboy({
-    dest: './public/clothes',
+    dest: './public/img/clothes',
     fnDestFilename: (fieldname, filename) => filename,
   }),
 );
