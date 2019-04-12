@@ -13,9 +13,8 @@ module.exports = {
     const result = await User.findOne({ sessionId });
     return result;
   },
-  /** ********************* */
-  updateImgById: async (id, img) => {
-    const result = await User.updateOne({ _id: id }, { $set: { img } });
+  updateById: async (id, avatarUrl, nickName) => {
+    const result = await User.updateOne({ _id: id }, { $set: { avatarUrl, nickName } });
     return result;
   },
 };

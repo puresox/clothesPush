@@ -28,6 +28,16 @@ router
         sessionId: user.sessionId,
       };
     }
+  })
+  .put('/', checkApi, async (ctx) => {
+    // 更新用户信息
+    const { userId } = ctx;
+    const { avatarUrl, nickName } = ctx.request.body;
+    await userModel.updateById(userId, avatarUrl, nickName);
+    ctx.body = {
+      success: true,
+      sessionId: '更新成功',
+    };
   });
 
 module.exports = router;
