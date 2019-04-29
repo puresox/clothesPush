@@ -2,6 +2,7 @@ const Router = require('koa-router');
 const fs = require('fs');
 const path = require('path');
 const clotheModel = require('../service/clothe');
+const getClothePalette = require('../opencv/opencv');
 
 const { checkApi } = require('../middleware/userCheck');
 
@@ -12,10 +13,13 @@ router
     // 添加服装
     const { userId } = ctx;
     const {
-      style, fl, fashion, color, size,
+      style, flMin, flMax, fashion, size,
     } = ctx.request.body;
-    const imagePath = ctx.request.files[0].fieldname;
-    const clothe = await clotheModel.create(userId, imagePath, style, fl, fashion, color, size);
+    const imagePath = ctx.request.files[0].filename;
+    const color = getClothePalette(imagePath);
+    const clothe = await clotheModel.create(
+      userId, imagePath, style, { max: flMax, min: flMin }, fashion, color, size,
+    );
     ctx.body = {
       success: true,
       msg: clothe.id,
@@ -55,9 +59,9 @@ router
     // 修改服装
     const { clotheId } = ctx.params;
     const {
-      style, fl, fashion, color, size,
+      style, flMin, flMax, fashion, size,
     } = ctx.request.body;
-    await clotheModel.updateById(clotheId, style, fl, fashion, color, size);
+    await clotheModel.updateById(clotheId, style, { max: flMax, min: flMin }, fashion, size);
     ctx.body = {
       success: true,
       msg: '修改成功',
