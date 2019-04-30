@@ -8,17 +8,22 @@ module.exports = function getClothePalette(clotheUrl) {
   const matGray = mat.bgrToGray();
   // 高斯模糊滤镜消除图像上的噪点
   const matGaussianBlur = matGray.gaussianBlur(new cv.Size(5, 5), 1.2);
+  // 计算阈值
+  const sigma = 0.33;
+  const { w: v } = matGaussianBlur.mean();
+  const highThresh = Math.min(255, (1 + sigma) * v);
+  const lowThresh = Math.max(0, (1 - sigma) * v);
   // 使用坎尼边缘侦测算法
-  const matCanny = matGaussianBlur.canny(50, 150);
+  const matCanny = matGaussianBlur.canny(lowThresh, highThresh);
   // 膨胀
   const kernel = new cv.Mat(5, 5, cv.CV_8UC1, 0);
   const matDilate = matCanny.dilate(kernel);
   // 选出最大的轮廓
-  const contours = matDilate.findContours(0, 2);
+  const contours = matDilate.findContours(cv.RETR_LIST, cv.CHAIN_APPROX_NONE);
   let largestArea = 0;
   let largestAreaIndex;
   for (let i = 0; i < contours.length; i += 1) {
-    if (contours[i].area > largestArea) {
+    if (contours[i].area > largestArea && contours[i].area < mat.rows * mat.cols * 0.9) {
       largestArea = contours[i].area;
       largestAreaIndex = i;
     }
@@ -39,7 +44,7 @@ module.exports = function getClothePalette(clotheUrl) {
   points.forEach(({ x, y }) => {
     // x是col，y是row
     const color = labMat.at(y, x);
-    colors.push({ x: Math.round(color.x * 100 / 255), y: color.y, z: color.z });
+    colors.push({ x: Math.round((color.x * 100) / 255), y: color.y, z: color.z });
   });
 
   // 色板大小
@@ -50,7 +55,7 @@ module.exports = function getClothePalette(clotheUrl) {
   // 用于存放色板的mat
   const paletteMat = new cv.Mat(labPalette.length || 1, 1, cv.CV_8UC3, [0, 0, 0]);
   labPalette.forEach((color, index) => {
-    paletteMat.set(index, 0, [Math.round(color.x * 255 / 100), color.y, color.z]);
+    paletteMat.set(index, 0, [Math.round((color.x * 255) / 100), color.y, color.z]);
   });
   // 转为rgb
   const rgbMat = paletteMat.cvtColor(cv.COLOR_Lab2RGB);
@@ -58,7 +63,10 @@ module.exports = function getClothePalette(clotheUrl) {
   for (let index = 0; index < labPalette.length; index += 1) {
     const color = rgbMat.at(index, 0);
     rgbPalette.push({
-      x: color.x, y: color.y, z: color.z, rate: labPalette[index].rate,
+      x: color.x,
+      y: color.y,
+      z: color.z,
+      rate: labPalette[index].rate,
     });
   }
 
