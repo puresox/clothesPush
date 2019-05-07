@@ -13,6 +13,10 @@ module.exports = {
     });
     return result;
   },
+  findById: async (id) => {
+    const result = await Clothe.findById(id);
+    return result;
+  },
   findByFashion: async (userId, fashion) => {
     const result = await Clothe.find({ userId, fashion });
     return result;
@@ -56,6 +60,10 @@ module.exports = {
       return '8';
     }
     return (flInt / 5 + 1).toString(10);
+  },
+  normalDistribution(x, mean) {
+    const score = 100 - Math.abs(x - mean);
+    return score;
   },
   getColorScore(dress) {
     const colors = [];
@@ -112,7 +120,8 @@ module.exports = {
       variance += (color.x - xMean) ** 2 + (color.y - yMean) ** 2 + (color.z - zMean) ** 2;
     });
     const sd = Math.sqrt(variance / colors.length);
-    const colorEntropy = sd * informationEntropy;
-    return colorEntropy;
+    const colorEntropy = (sd * informationEntropy).toFixed(2);
+    const colorScore = this.normalDistribution(colorEntropy, 120).toFixed(2);
+    return { colorScore, colorEntropy };
   },
 };

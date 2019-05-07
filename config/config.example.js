@@ -14,10 +14,6 @@ module.exports = {
     httpOnly: true,
     signed: true,
   },
-  adminInit: {
-    name: 'admin',
-    pw: '123456',
-  },
   AppId: '',
   AppSecret: '',
   // 和风天气

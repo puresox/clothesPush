@@ -7,16 +7,17 @@ const { checkApi } = require('../middleware/userCheck');
 const router = new Router();
 
 router
-  .get('/today', checkApi, async (ctx) => {
-    // 获取今日是否搭配
+  .get('/dressed', checkApi, async (ctx) => {
+    const { userId } = ctx;
+    const todayDress = await dressModel.findToday(userId);
     ctx.body = {
       success: true,
-      msg: {},
+      msg: todayDress,
     };
   })
-  .post('/today', checkApi, async (ctx) => {
+  .get('/today', checkApi, async (ctx) => {
     // 请求今日搭配
-    const { styleIndex, fl } = ctx.request.body;
+    const { styleIndex, fl } = ctx.request.query;
     const { userId } = ctx;
     const flIndex = clotheModel.fl2flIndex(fl);
     // 筛选服装
@@ -42,16 +43,32 @@ router
     });
     // 计算颜色熵
     dresses.forEach((dress) => {
-      const colorScore = clotheModel.getColorScore(dress);
+      const { colorScore, colorEntropy } = clotheModel.getColorScore(dress);
       dress.colorScore = colorScore;
+      dress.colorEntropy = colorEntropy;
     });
-
-    const dress = [coat[0], underwear[0], pants[0], shoes[0]];
-    const date = moment();
-    await dressModel.create(userId, dress, date);
+    // 降序排序
+    dresses.sort((a, b) => b.colorScore - a.colorScore);
     ctx.body = {
       success: true,
-      msg: dress,
+      msg: dresses,
+    };
+  })
+  .post('/', checkApi, async (ctx) => {
+    const { dress } = ctx.request.body;
+    const { userId } = ctx;
+    const date = moment().startOf('day');
+    const {
+      coat: { _id: coatId },
+      underwear: { _id: underwearId },
+      pants: { _id: pantsId },
+      shoes: { _id: shoesId },
+    } = dress;
+    await dressModel.create(userId, coatId, underwearId, pantsId, shoesId, date);
+    // 获取今日是否搭配
+    ctx.body = {
+      success: true,
+      msg: {},
     };
   });
 

@@ -18,7 +18,13 @@ router
     const imagePath = ctx.request.files[0].filename;
     const color = getClothePalette(imagePath);
     const clothe = await clotheModel.create(
-      userId, imagePath, style, { max: flMax, min: flMin }, fashion, color, size,
+      userId,
+      imagePath,
+      style,
+      { max: flMax, min: flMin },
+      fashion,
+      color,
+      size,
     );
     ctx.body = {
       success: true,
@@ -40,6 +46,15 @@ router
         pants,
         shoes,
       },
+    };
+  })
+  .get('/:clotheId', checkApi, async (ctx) => {
+    // 获取服装
+    const { clotheId } = ctx.params;
+    const clothe = await clotheModel.findById(clotheId);
+    ctx.body = {
+      success: true,
+      msg: clothe,
     };
   })
   .del('/:clotheId', checkApi, async (ctx) => {

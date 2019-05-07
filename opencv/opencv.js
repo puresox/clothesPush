@@ -23,7 +23,7 @@ module.exports = function getClothePalette(clotheUrl) {
   let largestArea = 0;
   let largestAreaIndex;
   for (let i = 0; i < contours.length; i += 1) {
-    if (contours[i].area > largestArea && contours[i].area < mat.rows * mat.cols * 0.9) {
+    if (contours[i].area > largestArea) {
       largestArea = contours[i].area;
       largestAreaIndex = i;
     }
