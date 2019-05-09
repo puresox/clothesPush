@@ -111,7 +111,10 @@ module.exports = function getPalette(colors, maxColors) {
     leafNum += 1;
   }
 
-
+  /**
+   * 合并比重小于1%的节点
+   *
+   */
   function reduce() {
     // 找到最深层次的并且有可合并节点的链表
     let lv = 7;
