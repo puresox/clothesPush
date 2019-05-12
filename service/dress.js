@@ -25,6 +25,10 @@ module.exports = {
       .populate('shoes');
     return result;
   },
+  findCountOfUserDresses: async (userId) => {
+    const result = await Dress.findOne({ userId }).countDocuments();
+    return result;
+  },
   /* *********************** */
   updateById: async (id, style, fl, fashion, color, size) => {
     const result = await Dress.updateOne(

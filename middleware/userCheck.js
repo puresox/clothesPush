@@ -6,6 +6,7 @@ module.exports = {
     const user = await findBySessionId(sessionid);
     if (user) {
       ctx.userId = user.id;
+      ctx.userInfo = user;
       await next();
     } else {
       ctx.body = {

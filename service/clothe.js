@@ -65,7 +65,7 @@ module.exports = {
     const score = 100 - Math.abs(x - mean);
     return score;
   },
-  getColorScore(dress) {
+  getColorScore(dress, mediumColorEntropy) {
     const colors = [];
     const dressKeys = Object.keys(dress);
     // 提取整套搭配的颜色
@@ -121,7 +121,7 @@ module.exports = {
     });
     const sd = Math.sqrt(variance / colors.length);
     const colorEntropy = (sd * informationEntropy).toFixed(2);
-    const colorScore = this.normalDistribution(colorEntropy, 120).toFixed(2);
+    const colorScore = this.normalDistribution(colorEntropy, mediumColorEntropy).toFixed(2);
     return { colorScore, colorEntropy };
   },
 };

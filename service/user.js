@@ -17,4 +17,8 @@ module.exports = {
     const result = await User.updateOne({ _id: id }, { $set: { avatarUrl, nickName } });
     return result;
   },
+  updateMediumColorEntropyById: async (id, mediumColorEntropy) => {
+    const result = await User.updateOne({ _id: id }, { $set: { mediumColorEntropy } });
+    return result;
+  },
 };
