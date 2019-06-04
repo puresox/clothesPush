@@ -15,15 +15,15 @@ module.exports = function getClothePalette(clotheUrl) {
   const lowThresh = Math.max(0, (1 - sigma) * v);
   // 使用坎尼边缘侦测算法
   const matCanny = matGaussianBlur.canny(lowThresh, highThresh);
-  // 膨胀
-  const kernel = new cv.Mat(5, 5, cv.CV_8UC1, 0);
-  const matDilate = matCanny.dilate(kernel);
+  // 闭运算
+  const kernel = new cv.Mat(3, 3, cv.CV_8UC1, 255);
+  const matClose = matCanny.dilate(kernel).erode(kernel);
   // 选出最大的轮廓
-  const contours = matDilate.findContours(cv.RETR_LIST, cv.CHAIN_APPROX_NONE);
+  const contours = matClose.findContours(cv.RETR_LIST, cv.CHAIN_APPROX_NONE);
   let largestArea = 0;
   let largestAreaIndex;
   for (let i = 0; i < contours.length; i += 1) {
-    if (contours[i].area > largestArea) {
+    if (contours[i].area > largestArea && contours[i].area < mat.rows * mat.cols * 0.9) {
       largestArea = contours[i].area;
       largestAreaIndex = i;
     }
