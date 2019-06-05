@@ -54,9 +54,10 @@ router
     });
     // 降序排序
     dresses.sort((a, b) => b.colorScore - a.colorScore);
+    const topDresses = dresses.slice(0, 10);
     ctx.body = {
       success: true,
-      msg: dresses,
+      msg: topDresses,
     };
   })
   .post('/', checkApi, async (ctx) => {
